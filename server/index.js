@@ -1,18 +1,16 @@
 require("dotenv").config();
 
 const express = require("express");
-const { Pool } = require("pg");
+const cors = require("cors");
+const pool = require("./config/db");
+const { posthog } = require("./config/posthog");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
-
 const PORT = process.env.PORT || 5000;
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+app.use(cors());
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("🚀 Medilink API is running!");
@@ -34,6 +32,17 @@ app.get("/test-db", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.use("/api/auth", authRoutes);
+
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+async function shutdown() {
+  server.close();
+  if (posthog) await posthog.shutdown();
+  process.exit(0);
+}
+
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
