@@ -1,0 +1,45 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+}
+
+.banner-success {
+  background: #ecfdf5;
+  color: #065f46;
+  border-bottom-color: #a7f3d0;
+}
+
+.banner-error {
+  background: #fef2f2;
+  color: #991b1b;
+  border-bottom-color: #fecaca;
+}
+
+.banner-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: inherit;
+  padding: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .banner-success {
+    background: #06281f;
+    color: #6ee7b7;
+    border-bottom-color: #065f46;
+  }
+  .banner-error {
+    background: #2a0f0f;
+    color: #fca5a5;
+    border-bottom-color: #991b1b;
+  }
+}

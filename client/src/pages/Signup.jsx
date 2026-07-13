@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { api } from "../api/client";
 import posthog from "../lib/posthog";
 
 const initialForm = {
@@ -23,9 +23,7 @@ const initialForm = {
 
 export default function Signup() {
   const [form, setForm] = useState(initialForm);
-  const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const { signup } = useAuth();
   const navigate = useNavigate();
 
   function update(field) {
@@ -37,14 +35,17 @@ export default function Signup() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError("");
     setSubmitting(true);
     posthog.capture("signup_submitted", { role: form.role });
     try {
-      await signup(form);
-      navigate("/dashboard");
+      await api.signup(form);
+      navigate("/", {
+        state: { banner: { type: "success", message: "Account created! Please log in to continue." } },
+      });
     } catch (err) {
-      setError(err.message);
+      navigate("/", {
+        state: { banner: { type: "error", message: err.message || "Error creating account. Please try again." } },
+      });
     } finally {
       setSubmitting(false);
     }
@@ -126,8 +127,6 @@ export default function Signup() {
             </label>
           </>
         )}
-
-        {error && <p className="form-error">{error}</p>}
 
         <button type="submit" className="btn btn-primary" disabled={submitting}>
           {submitting ? "Creating account..." : "Sign up"}

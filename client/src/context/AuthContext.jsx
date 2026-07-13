@@ -19,15 +19,6 @@ export function AuthProvider({ children }) {
     posthog.identify(newUser.id, { role: newUser.role, email: newUser.email });
   }, []);
 
-  const signup = useCallback(
-    async (payload) => {
-      const data = await api.signup(payload);
-      applySession(data.token, data.user);
-      return data.user;
-    },
-    [applySession]
-  );
-
   const login = useCallback(
     async (payload) => {
       const data = await api.login(payload);
@@ -46,7 +37,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, user, signup, login, logout }}>
+    <AuthContext.Provider value={{ token, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

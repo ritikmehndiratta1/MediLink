@@ -1,5 +1,7 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SearchIcon, MapPinIcon, ChatIcon, StarIcon, ShieldIcon, BoxIcon } from "../components/icons";
+import Banner from "../components/Banner";
 import "./Home.css";
 
 const FEATURES = [
@@ -36,8 +38,20 @@ const FEATURES = [
 ];
 
 export default function Home() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [banner, setBanner] = useState(location.state?.banner || null);
+
+  useEffect(() => {
+    if (location.state?.banner) {
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
+
   return (
     <>
+      <Banner type={banner?.type} message={banner?.message} onDismiss={() => setBanner(null)} />
+
       <section className="hero container">
         <h1>
           Medical Supplies,
