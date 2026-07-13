@@ -132,7 +132,7 @@ async function login(req, res) {
     const user = result.rows[0];
 
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-      return res.status(401).json({ success: false, error: "Invalid email or password" });
+      return res.status(401).json({ success: false, error: "Incorrect email or password" });
     }
 
     const token = signToken({ userId: user.id, role: user.role });
