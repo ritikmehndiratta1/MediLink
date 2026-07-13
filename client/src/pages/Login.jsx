@@ -39,7 +39,7 @@ export default function Login() {
         </label>
 
         <button type="submit" className="btn btn-primary" disabled={submitting}>
-          {submitting ? "Logging in..." : "Log in"}
+          {submitting ? "Logging in... (can take up to a minute if the server was asleep)" : "Log in"}
         </button>
       </form>
 

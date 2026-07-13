@@ -129,7 +129,7 @@ export default function Signup() {
         )}
 
         <button type="submit" className="btn btn-primary" disabled={submitting}>
-          {submitting ? "Creating account..." : "Sign up"}
+          {submitting ? "Creating account... (can take up to a minute if the server was asleep)" : "Sign up"}
         </button>
       </form>
 
