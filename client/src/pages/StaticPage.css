@@ -1,0 +1,42 @@
+.static-page {
+  padding: 56px 24px;
+  text-align: left;
+}
+
+.static-page .lead {
+  max-width: 640px;
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
+.static-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.static-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  background: var(--bg);
+}
+
+.static-icon {
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.static-card h2 {
+  font-size: 18px;
+}
+
+.static-card p {
+  font-size: 15px;
+}
+
+@media (max-width: 900px) {
+  .static-grid {
+    grid-template-columns: 1fr;
+  }
+}
