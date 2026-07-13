@@ -1,14 +1,29 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const REQUEST_TIMEOUT_MS = 15000;
 
 async function request(path, { method = "GET", body, token } = {}) {
-  const res = await fetch(`${API_URL}${path}`, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  let res;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: body ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
+    });
+  } catch (err) {
+    if (err.name === "AbortError") {
+      throw new Error("The server took too long to respond. Please try again.", { cause: err });
+    }
+    throw new Error("Could not reach the server. Please check your connection and try again.", { cause: err });
+  } finally {
+    clearTimeout(timeout);
+  }
 
   const data = await res.json().catch(() => ({}));
 
