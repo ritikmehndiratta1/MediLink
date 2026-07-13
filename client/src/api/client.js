@@ -1,8 +1,8 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-// Generous enough to survive a Render free-tier cold start (can take 30-50s+
-// to spin up an idle service) without giving up on a request that would have
-// otherwise succeeded.
-const REQUEST_TIMEOUT_MS = 45000;
+// Render's own free-tier wake-up sequence alone can take 40s+ before the app
+// process even starts, on top of whatever the request itself needs — so this
+// has to be generous or a real cold-start request gets mistaken for a hang.
+const REQUEST_TIMEOUT_MS = 90000;
 
 async function request(path, { method = "GET", body, token } = {}) {
   const controller = new AbortController();
