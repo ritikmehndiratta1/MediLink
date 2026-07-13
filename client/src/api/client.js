@@ -23,4 +23,6 @@ export const api = {
   signup: (payload) => request("/api/auth/signup", { method: "POST", body: payload }),
   login: (payload) => request("/api/auth/login", { method: "POST", body: payload }),
   me: (token) => request("/api/auth/me", { token }),
+  createTicket: (payload, token) => request("/api/tickets", { method: "POST", body: payload, token }),
+  myTickets: (token) => request("/api/tickets/mine", { token }),
 };

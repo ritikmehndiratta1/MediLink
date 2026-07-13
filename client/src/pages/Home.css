@@ -1,0 +1,142 @@
+.hero {
+  padding: 72px 24px 56px;
+  text-align: center;
+}
+
+.hero p.lead {
+  max-width: 640px;
+  margin: 0 auto 32px;
+  font-size: 19px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 56px;
+}
+
+.hero-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.hero-card {
+  background: var(--bg-alt);
+  border-radius: 16px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.hero-card svg {
+  color: var(--accent);
+}
+
+.how-it-works,
+.feature-grid-section {
+  padding: 56px 24px;
+}
+
+.how-it-works {
+  background: var(--bg-alt);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.how-it-works h2,
+.feature-grid-section h2 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.how-it-works-tracks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.track h3 {
+  font-size: 18px;
+  color: var(--accent);
+  margin: 0 0 16px;
+}
+
+.track ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.track li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.step-number {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: left;
+}
+
+.feature-card svg {
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.feature-card h3 {
+  font-size: 17px;
+  margin: 0 0 8px;
+  color: var(--text-h);
+}
+
+.feature-card p {
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .hero-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .how-it-works-tracks,
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+}

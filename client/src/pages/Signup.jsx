@@ -129,7 +129,7 @@ export default function Signup() {
 
         {error && <p className="form-error">{error}</p>}
 
-        <button type="submit" disabled={submitting}>
+        <button type="submit" className="btn btn-primary" disabled={submitting}>
           {submitting ? "Creating account..." : "Sign up"}
         </button>
       </form>
