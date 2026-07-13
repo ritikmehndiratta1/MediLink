@@ -52,8 +52,9 @@ async function signup(req, res) {
     return res.status(400).json({ success: false, error: `Missing required fields: ${missing.join(", ")}` });
   }
 
-  const client = await pool.connect();
+  let client;
   try {
+    client = await pool.connect();
     await client.query("BEGIN");
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
@@ -103,7 +104,7 @@ async function signup(req, res) {
 
     return res.status(201).json({ success: true, token, user: toUserResponse(user) });
   } catch (err) {
-    await client.query("ROLLBACK");
+    if (client) await client.query("ROLLBACK").catch(() => {});
 
     if (err.code === "23505") {
       const field = err.constraint?.includes("email") ? "email" : "drug license";
@@ -111,9 +112,9 @@ async function signup(req, res) {
     }
 
     console.error(err);
-    return res.status(500).json({ success: false, error: "Failed to create account" });
+    return res.status(500).json({ success: false, error: "Failed to create account. Please try again shortly." });
   } finally {
-    client.release();
+    if (client) client.release();
   }
 }
 

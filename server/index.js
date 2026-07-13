@@ -36,6 +36,11 @@ app.get("/test-db", async (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/tickets", ticketRoutes);
 
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ success: false, error: "Something went wrong. Please try again." });
+});
+
 const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
