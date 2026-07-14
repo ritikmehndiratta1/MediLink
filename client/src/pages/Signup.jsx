@@ -19,12 +19,34 @@ const initialForm = {
   businessHours: "",
   deliveryAvailable: false,
   deliveryRadiusKm: "",
+  latitude: "",
+  longitude: "",
 };
 
 export default function Signup() {
   const [form, setForm] = useState(initialForm);
   const [submitting, setSubmitting] = useState(false);
+  const [locationError, setLocationError] = useState("");
   const navigate = useNavigate();
+
+  function useMyLocation() {
+    if (!navigator.geolocation) {
+      setLocationError("Location isn't available in this browser.");
+      return;
+    }
+    setLocationError("");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setForm((prev) => ({
+          ...prev,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        }));
+      },
+      () => setLocationError("Location permission denied. You can still sign up without it."),
+      { timeout: 10000 }
+    );
+  }
 
   function update(field) {
     return (e) => {
@@ -114,6 +136,16 @@ export default function Signup() {
           Business hours
           <input placeholder="e.g. 9 AM - 9 PM" value={form.businessHours} onChange={update("businessHours")} />
         </label>
+
+        <div>
+          <button type="button" className="btn btn-outline" onClick={useMyLocation}>
+            {form.latitude ? "Location set" : "Use my current location"}
+          </button>
+          <p style={{ fontSize: 13, marginTop: 4 }}>
+            Helps retailers find you in nearby search results. Optional, but recommended.
+          </p>
+          {locationError && <p className="form-error">{locationError}</p>}
+        </div>
 
         {form.role === "WHOLESALER" && (
           <>
