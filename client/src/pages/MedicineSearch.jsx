@@ -1,4 +1,6 @@
 import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { api } from "../api/client";
 import { timeAgo } from "../lib/timeAgo";
 import { ShieldIcon, MapPinIcon } from "../components/icons";
@@ -12,6 +14,8 @@ const TYPE_FILTERS = [
 ];
 
 export default function MedicineSearch() {
+  const { token, user } = useAuth();
+  const navigate = useNavigate();
   const [q, setQ] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
@@ -67,6 +71,18 @@ export default function MedicineSearch() {
   function handleSubmit(e) {
     e.preventDefault();
     runSearch();
+  }
+
+  async function handleChat(result) {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    const data = await api.startConversation(
+      { wholesalerId: result.wholesaler_id, medicineId: result.medicine_id },
+      token
+    );
+    navigate(`/messages/${data.conversationId}`);
   }
 
   return (
@@ -148,9 +164,11 @@ export default function MedicineSearch() {
               <p className="result-meta">
                 Rs. {r.price ?? "—"} · Qty {r.quantity} · Updated {timeAgo(r.last_updated)}
               </p>
-              <a className="btn btn-outline call-btn" href={`tel:${r.phone}`}>
-                Call to order · {r.phone}
-              </a>
+              {(!user || user.role === "RETAILER") && (
+                <button type="button" className="btn btn-outline call-btn" onClick={() => handleChat(r)}>
+                  Chat with wholesaler
+                </button>
+              )}
             </div>
           </div>
         ))}

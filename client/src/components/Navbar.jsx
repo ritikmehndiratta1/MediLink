@@ -24,6 +24,9 @@ export default function Navbar() {
           </NavLink>
           <NavLink to="/search">Search Medicines</NavLink>
           {user?.role === "WHOLESALER" && <NavLink to="/inventory">My Inventory</NavLink>}
+          {(user?.role === "RETAILER" || user?.role === "WHOLESALER") && (
+            <NavLink to="/messages">Messages</NavLink>
+          )}
           <NavLink to="/about">About Us</NavLink>
           <NavLink to="/connect">Connect</NavLink>
           <NavLink to="/query">Query</NavLink>

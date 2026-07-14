@@ -70,4 +70,10 @@ export const api = {
   adminUpdateTicketStatus: (id, status, token) =>
     request(`/api/admin/tickets/${id}`, { method: "PATCH", body: { status }, token }),
   adminAnalytics: (token) => request("/api/admin/analytics", { token }),
+
+  startConversation: (payload, token) => request("/api/conversations", { method: "POST", body: payload, token }),
+  myConversations: (token) => request("/api/conversations/mine", { token }),
+  conversationMessages: (id, token) => request(`/api/conversations/${id}/messages`, { token }),
+  sendMessage: (id, body, token) =>
+    request(`/api/conversations/${id}/messages`, { method: "POST", body: { body }, token }),
 };

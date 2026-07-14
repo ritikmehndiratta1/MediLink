@@ -13,8 +13,8 @@ export default function Login() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await login({ email, password });
-      navigate("/");
+      const loggedInUser = await login({ email, password });
+      navigate(loggedInUser.role === "RETAILER" ? "/search" : "/");
     } catch (err) {
       navigate("/", {
         state: { banner: { type: "error", message: err.message || "Incorrect email or password" } },

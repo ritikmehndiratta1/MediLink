@@ -57,7 +57,7 @@ async function search(req, res) {
       m.id AS medicine_id, m.brand_name, m.generic_name, m.manufacturer,
       m.dosage_form, m.strength, m.pack_size, m.is_generic,
       u.id AS wholesaler_id, u.verified,
-      bp.business_name AS wholesaler_name, bp.city, bp.state, bp.phone,
+      bp.business_name AS wholesaler_name, bp.city, bp.state,
       bp.average_rating, bp.delivery_available, bp.delivery_radius_km,
       ${distanceSelect} AS distance_km
     FROM inventory i
