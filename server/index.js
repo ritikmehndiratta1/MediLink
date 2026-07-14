@@ -9,6 +9,7 @@ const ticketRoutes = require("./routes/ticketRoutes");
 const medicineRoutes = require("./routes/medicineRoutes");
 const inventoryRoutes = require("./routes/inventoryRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const conversationRoutes = require("./routes/conversationRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -41,6 +42,7 @@ app.use("/api/tickets", ticketRoutes);
 app.use("/api/medicines", medicineRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/conversations", conversationRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);

@@ -12,6 +12,8 @@ import Query from "./pages/Query";
 import MedicineSearch from "./pages/MedicineSearch";
 import WholesalerInventory from "./pages/WholesalerInventory";
 import AdminDashboard from "./pages/AdminDashboard";
+import Messages from "./pages/Messages";
+import Conversation from "./pages/Conversation";
 import "./App.css";
 
 function App() {
@@ -47,6 +49,22 @@ function App() {
             element={
               <ProtectedRoute role="ADMIN">
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <ProtectedRoute role={["RETAILER", "WHOLESALER"]}>
+                <Messages />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/messages/:id"
+            element={
+              <ProtectedRoute role={["RETAILER", "WHOLESALER"]}>
+                <Conversation />
               </ProtectedRoute>
             }
           />
