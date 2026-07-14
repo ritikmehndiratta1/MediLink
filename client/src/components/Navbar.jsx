@@ -22,6 +22,8 @@ export default function Navbar() {
           <NavLink to="/" end>
             Home
           </NavLink>
+          <NavLink to="/search">Search Medicines</NavLink>
+          {user?.role === "WHOLESALER" && <NavLink to="/inventory">My Inventory</NavLink>}
           <NavLink to="/about">About Us</NavLink>
           <NavLink to="/connect">Connect</NavLink>
           <NavLink to="/query">Query</NavLink>
@@ -30,8 +32,8 @@ export default function Navbar() {
         <div className="navbar-actions">
           {user ? (
             <>
-              <Link to="/dashboard" className="btn btn-outline">
-                Dashboard
+              <Link to={user.role === "ADMIN" ? "/admin" : "/dashboard"} className="btn btn-outline">
+                {user.role === "ADMIN" ? "Admin" : "Dashboard"}
               </Link>
               <button type="button" className="btn btn-primary" onClick={handleLogout}>
                 Log out

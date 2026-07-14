@@ -37,10 +37,37 @@ async function request(path, { method = "GET", body, token } = {}) {
   return data;
 }
 
+function toQueryString(params) {
+  const search = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") search.set(key, value);
+  });
+  const qs = search.toString();
+  return qs ? `?${qs}` : "";
+}
+
 export const api = {
   signup: (payload) => request("/api/auth/signup", { method: "POST", body: payload }),
   login: (payload) => request("/api/auth/login", { method: "POST", body: payload }),
   me: (token) => request("/api/auth/me", { token }),
   createTicket: (payload, token) => request("/api/tickets", { method: "POST", body: payload, token }),
   myTickets: (token) => request("/api/tickets/mine", { token }),
+
+  searchMedicines: (params) => request(`/api/medicines/search${toQueryString(params)}`),
+  listMedicines: () => request("/api/medicines"),
+  createMedicine: (payload, token) => request("/api/medicines", { method: "POST", body: payload, token }),
+  deleteMedicine: (id, token) => request(`/api/medicines/${id}`, { method: "DELETE", token }),
+
+  myInventory: (token) => request("/api/inventory/mine", { token }),
+  upsertInventory: (payload, token) => request("/api/inventory", { method: "POST", body: payload, token }),
+  deleteInventoryItem: (id, token) => request(`/api/inventory/${id}`, { method: "DELETE", token }),
+
+  adminListBusinesses: (token) => request("/api/admin/businesses", { token }),
+  adminSetVerified: (id, verified, token) =>
+    request(`/api/admin/businesses/${id}/verify`, { method: "PATCH", body: { verified }, token }),
+  adminDeleteBusiness: (id, token) => request(`/api/admin/businesses/${id}`, { method: "DELETE", token }),
+  adminListTickets: (token) => request("/api/admin/tickets", { token }),
+  adminUpdateTicketStatus: (id, status, token) =>
+    request(`/api/admin/tickets/${id}`, { method: "PATCH", body: { status }, token }),
+  adminAnalytics: (token) => request("/api/admin/analytics", { token }),
 };
