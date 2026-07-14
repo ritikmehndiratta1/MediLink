@@ -75,17 +75,37 @@ async function upsertProfile(client, userId, p, extra) {
   );
 }
 
+// Stocked by every wholesaler (with different price/quantity each), so
+// searching any of these always returns multiple wholesalers to compare —
+// this is what actually exercises distance sorting and verified filtering.
+const SHARED_BRAND_NAMES = ["Dolo 650", "Azithral", "Crocin", "Amoxil"];
+
+async function insertInventory(client, wholesalerId, medicineId) {
+  const price = (20 + Math.random() * 180).toFixed(2);
+  const quantity = 10 + Math.floor(Math.random() * 190);
+  await client.query(
+    `INSERT INTO inventory (wholesaler_id, medicine_id, price, quantity, last_updated)
+     VALUES ($1, $2, $3, $4, NOW())
+     ON CONFLICT (wholesaler_id, medicine_id)
+     DO UPDATE SET price = EXCLUDED.price, quantity = EXCLUDED.quantity, last_updated = NOW()`,
+    [wholesalerId, medicineId, price, quantity]
+  );
+}
+
 (async () => {
   let client;
   try {
     client = await pool.connect();
 
-    const medicines = await client.query("SELECT id FROM medicines");
+    const medicines = await client.query("SELECT id, brand_name FROM medicines");
     if (medicines.rows.length === 0) {
       console.error("No medicines found — run 004_medicines.sql first.");
       process.exit(1);
     }
     const medicineIds = medicines.rows.map((r) => r.id);
+    const sharedMedicineIds = medicines.rows
+      .filter((r) => SHARED_BRAND_NAMES.includes(r.brand_name))
+      .map((r) => r.id);
 
     console.log("Seeding retailers...");
     for (const r of RETAILERS) {
@@ -100,24 +120,24 @@ async function upsertProfile(client, userId, p, extra) {
       await upsertProfile(client, userId, w, w);
       await client.query("UPDATE users SET verified = $1 WHERE id = $2", [w.verified, userId]);
 
-      const stockCount = 4 + Math.floor(Math.random() * 3);
-      const shuffled = [...medicineIds].sort(() => Math.random() - 0.5).slice(0, stockCount);
-      for (const medicineId of shuffled) {
-        const price = (20 + Math.random() * 180).toFixed(2);
-        const quantity = 10 + Math.floor(Math.random() * 190);
-        await client.query(
-          `INSERT INTO inventory (wholesaler_id, medicine_id, price, quantity, last_updated)
-           VALUES ($1, $2, $3, $4, NOW())
-           ON CONFLICT (wholesaler_id, medicine_id)
-           DO UPDATE SET price = EXCLUDED.price, quantity = EXCLUDED.quantity, last_updated = NOW()`,
-          [userId, medicineId, price, quantity]
-        );
+      // Every wholesaler stocks the shared set (guarantees multi-wholesaler
+      // results), plus a few random extras from the rest of the catalog.
+      for (const medicineId of sharedMedicineIds) {
+        await insertInventory(client, userId, medicineId);
+      }
+
+      const remaining = medicineIds.filter((id) => !sharedMedicineIds.includes(id));
+      const extraCount = 2 + Math.floor(Math.random() * 3);
+      const extras = [...remaining].sort(() => Math.random() - 0.5).slice(0, extraCount);
+      for (const medicineId of extras) {
+        await insertInventory(client, userId, medicineId);
       }
     }
 
     console.log(`\nDone. All test accounts use the password: ${TEST_PASSWORD}`);
     console.log("Retailers:", RETAILERS.map((r) => r.email).join(", "));
     console.log("Wholesalers:", WHOLESALERS.map((w) => w.email).join(", "));
+    console.log("Stocked by every wholesaler:", SHARED_BRAND_NAMES.join(", "));
   } catch (err) {
     console.error("FAILED:", err.message);
     console.error(err);
